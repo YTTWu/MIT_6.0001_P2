@@ -68,9 +68,7 @@ def is_word_guessed(secret_word, letters_guessed):
         return True
 
 
-    '''
-    get a clone or not ################################
-    '''
+
 
 
 
@@ -105,12 +103,13 @@ def get_available_letters(letters_guessed):
     '''
     # FILL IN YOUR CODE HERE AND DELETE "pass"
     alphabets_list = list(string.ascii_lowercase)
-    letters_guessed_list = list(letters_guessed)
-    letters_guessed_list.sort()
-    
-    for letter in alphabets_list:
-        if letter in letters_guessed_list:
+
+    alphabets_list_copy = alphabets_list[:]
+
+    for letter in alphabets_list_copy:
+        if letter in letters_guessed:
             alphabets_list.remove(letter)
+
     
     alphabets_list = ''.join(alphabets_list)
             
@@ -150,7 +149,8 @@ def hangman(secret_word):
     letters_guessed = []
     warning_left = 3
     guesses_left = 6
-    
+    current = ''
+    newGuess = None
     if letters_guessed == '':
         print('Welcome to the game Hangma!\n\
 I am thinking of a word that is 4 letters long.\n\
@@ -158,21 +158,42 @@ You have 3 warnings left.\n\
 --------------')
     
     while not is_word_guessed(secret_word, letters_guessed):
+        if(warning_left == 0 or guesses_left == 0):
+            print('GAME OVER!')
+            return
         print('You have', guesses_left, 'guesses lfet.' )
         avalable_letters = get_available_letters(letters_guessed)
         print('Available letters:', avalable_letters)
     
         temp = input('Please guess a letter: ')
-        if  str.isalpha(temp) and str.lower(temp):
-            letters_guessed += temp
-            current = get_guessed_word(secret_word, letters_guessed)
-            print(current)
-        else:
+        if  not str.isalpha(temp) or not str.lower(temp):
             warning_left -= 1
             print('Oops! That is not a valid letter. You have', warning_left, 'left')
-    
-    
-    
+
+        elif temp not in avalable_letters:
+            warning_left -= 1
+            print('Oops! You\'ve already guessed that letter. You now have', warning_left, 'warnings')
+            print(current)
+            print('-----------------')
+
+
+        else:
+            letters_guessed += temp
+            newGuess = get_guessed_word(secret_word, letters_guessed)
+            if current == newGuess:
+                guesses_left -= 1
+                print("Oops! That letter is not in my word:")
+                print(current)
+                print('-----------------')
+            else:
+                current = newGuess
+                print('Good guess:', newGuess)
+                print('-----------------')
+
+
+
+
+
 
 
 
